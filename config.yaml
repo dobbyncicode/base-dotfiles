@@ -35,11 +35,12 @@ dotfiles:
         dst: ~/.config/caelestia/hypr-user.conf
     f_caelestia-fish:
         src: dotfiles/caelestia/user-config.fish
-        dst: ~/.config/caelestia/user-config.fish
+        dst: "{{@@ fish_config_dir @@}}"
         link: absolute
     f_gitconfig:
         src: gitconfig
         dst: ~/.gitconfig
+        link: absolute
     f_caelestia-shell:
         src: dotfiles/caelestia/shell.json
         dst: ~/.config/caelestia/shell.json
@@ -53,6 +54,9 @@ dotfiles:
         
 profiles:
     DobbynciCode:
+        variables:
+            fish_config_dir: ~/.config/caelestia/user-config.fish
+
         dotfiles:
             # --- [ i ] - Directories ---
             - d_hypr
@@ -66,3 +70,12 @@ profiles:
             - f_caelestia-shell
             - f_nvim-default
             - f_yt-dlp
+    termux:
+        variables:
+            fish_config_dir: ~/.config/fish/config.fish
+        dotfiles:
+            # --- [ i ] - Directories ---
+
+            # --- [ i ] - Files ---
+            - f_nvim-default
+            - f_gitconfig

@@ -1,3 +1,7 @@
+{%@@ if profile == "termux" @@%}
+starship init fish | source
+{%@@ endif @@%}
+
 mise activate fish | source
 
 # --- [ i ] - Abbr section ---
