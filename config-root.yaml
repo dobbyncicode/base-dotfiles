@@ -1,0 +1,19 @@
+config:
+    backup: true
+    banner: false
+    create: true
+    dotpath: system
+    keepdot: false
+    link_dotfile_default: nolink
+    link_on_import: nolink
+    longkey: false
+
+dotfiles:
+    f_autologin:
+      src: autologin.conf
+      dst: /etc/systemd/system/getty@tty1.service.d/override.conf
+
+profiles:
+    DobbynciCode:
+      dotfiles:
+        - f_autologin

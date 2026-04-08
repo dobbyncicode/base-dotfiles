@@ -1,0 +1,9 @@
+variables:
+    terminal: "foot"
+    browser: "brave"
+    volume_control: "pavucontrol"
+    file_manager: "thunar"
+    username: "{{@@ env['USER'] @@}}"
+    editor: "nvim"
+    location: "tigbe"
+    tab_space: "4"
