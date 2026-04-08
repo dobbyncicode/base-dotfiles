@@ -14,7 +14,7 @@ config:
     workdir: cache
     import_variables:
         - variables.yaml
-        - uservariables.yaml
+        - uservariables.yaml:optional
 
 dotfiles:
     # --- [ i ] - Directories ---
