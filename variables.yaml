@@ -7,3 +7,4 @@ variables:
     editor: "nvim"
     location: "tigbe"
     tab_space: "4"
+    rootpath: "{{@@ _dotdrop_dotpath @@}}"
