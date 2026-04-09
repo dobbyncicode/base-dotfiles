@@ -57,16 +57,6 @@ dst = "~/.config/nvim/after/plugin/patch.lua"
 src = "dotfiles/yt-dlp/config"
 dst = "~/.config/yt-dlp/config"
 
-[dotfiles.f_testhome]
-src = "testfilehome.txt"
-dst = "testhome.txt"
-link = "absolute"
-
-[dotfiles.f_testdot]
-src = "dotfiles/testfiledotfile.txt"
-dst = "~/.config/testing/testdot.txt"
-link = "absolute"
-
 [profiles.DobbynciCode]
 dotfiles = [
     "d_hypr",
@@ -77,9 +67,7 @@ dotfiles = [
     "f_gitconfig",
     "f_caelestia-shell",
     "f_nvim-default",
-    "f_yt-dlp",
-    "f_testhome",
-    "f_testdot",
+    "f_yt-dlp"
 ]
 
 [profiles.DobbynciCode.variables]
@@ -89,9 +77,7 @@ fish_config_dir = "~/.config/caelestia/user-config.fish"
 dotfiles = [
     "f_nvim-default",
     "f_gitconfig",
-    "f_caelestia-fish",
-    "f_testhome",
-    "f_testdot",
+    "f_caelestia-fish"
 ]
 
 [profiles.localhost.variables]
