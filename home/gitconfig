@@ -1,31 +1,31 @@
 [user]
-	email = {{@@ user_email @@}}
-	name = {{@@ user_name @@}}
+    email = {{@@ user_email @@}}
+    name = {{@@ user_name @@}}
 
 [init]
-	defaultBranch = main
+    defaultBranch = main
 
 [pull]
-	rebase = true
+    rebase = true
 
 [diff]
-	algorithm = histogram
-	renames = true
+    algorithm = histogram
+    renames = true
 
 [color]
-	ui = auto
+    ui = auto
 
 [core]
-	editor = {{@@ editor @@}}
-	whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+    editor = {{@@ editor @@}}
+    whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
 
 [alias]
-	st = status
-	co = checkout
-	br = branch
-	cm = commit -m
-	ps = push
-	pl = pull
-	lg = log --graph --oneline --all --decorate
-	unstage = reset HEAD --
-	last = log -1 HEAD
+    st = status
+    co = checkout
+    br = branch
+    cm = commit -m
+    ps = push
+    pl = pull
+    lg = log --graph --oneline --all --decorate
+    unstage = reset HEAD --
+    last = log -1 HEAD
