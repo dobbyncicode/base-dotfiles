@@ -1,13 +1,15 @@
-#
-# ~/.bashrc
-#
-
-# If not running interactively, don't do anything
+{%@@ if profile != "localhost" @@%}
 [[ $- != *i* ]] && return
-
 if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
 	exec start-hyprland
 fi
+{%@@ endif @@%}
+
+{%@@ if profile == "localhost" @@%}
+fastfetch
+alias apt="nala"
+alias rld="source ~/.bashrc"
+{%@@ endif @@%}
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'

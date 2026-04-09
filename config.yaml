@@ -1,6 +1,7 @@
 uservariables:
     user_email: "email"
     user_name: "name"
+
 config:
     backup: false
     banner: false
@@ -14,8 +15,8 @@ config:
     import_variables:
         - variables.yaml
         - uservariables.yaml:optional
+
 dotfiles:
-    # --- [ i ] - Directories ---
     d_hypr:
         src: dotfiles/hypr
         dst: ~/.config/custom-dotfiles/hypr
@@ -23,15 +24,18 @@ dotfiles:
         src: Wallpapers
         dst: ~/Pictures/Wallpapers
         link: absolute
-    # --- [ i ] - Files ---
+    d_termux:
+        src: termux
+        dst: ~/.termux
+        link: absolute
     f_bashrc:
         src: bashrc
         dst: ~/.bashrc
     f_caelestia-hypr:
         src: dotfiles/caelestia/hypr-user.conf
         dst: ~/.config/caelestia/hypr-user.conf
-    f_caelestia-fish:
-        src: dotfiles/caelestia/user-config.fish
+    f_fish:
+        src: dotfiles/fish/config.fish
         dst: "{{@@ fish_config_dir @@}}"
         link: absolute
     f_gitconfig:
@@ -48,26 +52,26 @@ dotfiles:
     f_yt-dlp:
         src: dotfiles/yt-dlp/config
         dst: ~/.config/yt-dlp/config
-    f_testhome:
-        src: testfilehome.txt
-        dst: testhome.txt
-        link: absolute
-    f_testdot:
-        src: dotfiles/testfiledotfile.txt
-        dst: ~/.config/testing/testdot.txt
-        link: absolute
+    f_fish-greeting:
+        src: dotfiles/fish/fish_greeting.fish
+        dst: ~/.config/fish/functions/fish_greeting.fish
+    f_fastfetch:
+        src: dotfiles/fastfetch/config.jsonc
+        dst: ~/.config/fastfetch/config.jsonc
+    f_starship:
+        src: dotfiles/starship.toml
+        dst: ~/.config/starship.toml
+
 profiles:
     DobbynciCode:
         variables:
             fish_config_dir: ~/.config/caelestia/user-config.fish
         dotfiles:
-            # --- [ i ] - Directories ---
             - d_hypr
             - d_pictures
-            # --- [ i ] - Files ---
             - f_bashrc
             - f_caelestia-hypr
-            - f_caelestia-fish
+            - f_fish
             - f_gitconfig
             - f_caelestia-shell
             - f_nvim-default
@@ -76,8 +80,10 @@ profiles:
         variables:
             fish_config_dir: ~/.config/fish/config.fish
         dotfiles:
+            - d_termux
             - f_nvim-default
             - f_gitconfig
-            - f_caelestia-fish
-            - f_testhome
-            - f_testdot
+            - f_fish
+            - f_fish-greeting
+            - f_fastfetch
+            - f_starship

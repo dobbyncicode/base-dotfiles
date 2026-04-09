@@ -1,31 +1,30 @@
 [user]
-    email = {{@@ user_email @@}}
-    name = {{@@ user_name @@}}
-
-[init]
-    defaultBranch = main
-
-[pull]
-    rebase = true
-
-[diff]
-    algorithm = histogram
-    renames = true
-
-[color]
-    ui = auto
+name = {{@@ user_name @@}}
+email = {{@@ user_email @@}}
 
 [core]
-    editor = {{@@ editor @@}}
-    whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+editor = {{@@ editor @@}}
+autocrlf = input
+whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
 
-[alias]
-    st = status
-    co = checkout
-    br = branch
-    cm = commit -m
-    ps = push
-    pl = pull
-    lg = log --graph --oneline --all --decorate
-    unstage = reset HEAD --
-    last = log -1 HEAD
+[init]
+defaultBranch = main
+
+[push]
+default = current
+autoSetupRemote = true
+
+[pull]
+rebase = true
+
+[diff]
+colorMoved = default
+algorithm = histogram
+renames = true
+
+[merge]
+conflictStyle = diff3
+tool = nvimdiff
+
+[color]
+ui = auto
