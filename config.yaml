@@ -1,7 +1,6 @@
 uservariables:
     user_email: "email"
     user_name: "name"
-
 config:
     backup: false
     banner: false
@@ -15,7 +14,6 @@ config:
     import_variables:
         - variables.yaml
         - uservariables.yaml:optional
-
 dotfiles:
     # --- [ i ] - Directories ---
     d_hypr:
@@ -25,7 +23,6 @@ dotfiles:
         src: Wallpapers
         dst: ~/Pictures/Wallpapers
         link: absolute
-
     # --- [ i ] - Files ---
     f_bashrc:
         src: bashrc
@@ -51,17 +48,14 @@ dotfiles:
     f_yt-dlp:
         src: dotfiles/yt-dlp/config
         dst: ~/.config/yt-dlp/config
-        
 profiles:
     DobbynciCode:
         variables:
             fish_config_dir: ~/.config/caelestia/user-config.fish
-
         dotfiles:
             # --- [ i ] - Directories ---
             - d_hypr
             - d_pictures
-
             # --- [ i ] - Files ---
             - f_bashrc
             - f_caelestia-hypr
@@ -70,12 +64,10 @@ profiles:
             - f_caelestia-shell
             - f_nvim-default
             - f_yt-dlp
-    termux:
+    localhost:
         variables:
             fish_config_dir: ~/.config/fish/config.fish
         dotfiles:
-            # --- [ i ] - Directories ---
-
-            # --- [ i ] - Files ---
             - f_nvim-default
             - f_gitconfig
+            - f_caelestia-fish

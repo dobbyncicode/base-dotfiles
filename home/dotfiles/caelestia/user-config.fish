@@ -1,8 +1,10 @@
-{%@@ if profile == "termux" @@%}
+{%@@ if profile == "localhost" @@%}
 starship init fish | source
 {%@@ endif @@%}
 
+{%@@ if not profile == "localhost" @@%}
 mise activate fish | source
+{%@@ endif @@%}
 
 # --- [ i ] - Abbr section ---
 abbr di "dotdrop install --cfg={{@@ _dotdrop_cfgpath @@}}"
