@@ -53,7 +53,7 @@ dotfiles:
         dst: testhome.txt
         link: absolute
     f_testdot:
-        src: testfiledotfile.txt
+        src: dotfiles/testfiledotfile.txt
         dst: ~/.config/testing/testdot.txt
         link: absolute
 profiles:
