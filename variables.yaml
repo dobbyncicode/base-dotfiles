@@ -1,11 +1,19 @@
 variables:
+    # --- [ i ] - Apps ---
     terminal: "foot"
     browser: "brave"
     volume_control: "pavucontrol"
     file_manager: "thunar"
-    username: "{{@@ env['USER'] @@}}"
     editor: "nvim"
+
+    # --- [ i ] - User information ---
     location: "tigbe"
-    tab_space: "4"
     rootpath: "{{@@ _dotdrop_dotpath @@}}"
     shell: "fish"
+
+    # --- [ i ] - Editor information ---
+    tab_space: "4"
+
+    # --- [ i ] - System information ---
+    interactive_shell: fish
+    default_shell: bash

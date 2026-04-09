@@ -42,6 +42,7 @@ dotfiles:
         src: gitconfig
         dst: ~/.gitconfig
         link: absolute
+        template: true
     f_caelestia-shell:
         src: dotfiles/caelestia/shell.json
         dst: ~/.config/caelestia/shell.json
@@ -67,8 +68,10 @@ dotfiles:
 
 actions:
     post:
-        change_shell: "chsh -s {{@@ shell @@}}"
-
+        change_shell: >
+            bash -c '
+                [ "$(basename "$SHELL")" != "{{@@ default_shell}}" ] && chsh -s {{@@ default_shell @@}}
+            '
 profiles:
     DobbynciCode:
         variables:

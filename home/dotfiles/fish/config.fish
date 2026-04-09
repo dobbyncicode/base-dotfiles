@@ -29,5 +29,5 @@ abbr tla "tree -la -I '.git'"
 # --- [ i ] - Environment variables section ---
 set -gx EDITOR {{@@ editor @@}}
 set -gx VISUAL {{@@ editor @@}}
-
+set -gc DOTDROP_MIME_TEXT application/x-wine-extension-ini
 # --- [ i ] - Function section ---
