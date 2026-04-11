@@ -1,5 +1,5 @@
+
 {%@@ if profile != "localhost" @@%}
-[[ $- != *i* ]] && return
 if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
 	exec start-hyprland
 fi
@@ -15,4 +15,9 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 PS1='[\u@\h \W]\$ '
 
-[[ $- == *i* ]] && exec {{@@ interactive_shell @@}}
+export PATH="$PATH:$HOME/.local/bin"
+
+if [[ $- == *i* ]]; then
+    exec {{@@ interactive_shell @@}}
+fi
+

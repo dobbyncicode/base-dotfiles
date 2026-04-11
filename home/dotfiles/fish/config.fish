@@ -2,7 +2,7 @@
 starship init fish | source
 
 alias apt="nala"
-alias ls="eza --icons --groups-directories-first -1"
+alias ls="eza --icons --group-directories-first -1"
 {%@@ endif @@%}
 
 {%@@ if profile != "localhost" @@%}
@@ -29,5 +29,5 @@ abbr tla "tree -la -I '.git'"
 # --- [ i ] - Environment variables section ---
 set -gx EDITOR {{@@ editor @@}}
 set -gx VISUAL {{@@ editor @@}}
-set -gc DOTDROP_MIME_TEXT application/x-wine-extension-ini
+set -gx DOTDROP_MIME_TEXT application/x-wine-extension-ini
 # --- [ i ] - Function section ---

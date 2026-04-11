@@ -66,12 +66,6 @@ dotfiles:
         src: hushlogin
         dst: ~/.hushlogin
 
-actions:
-    post:
-        change_shell: >
-            bash -c '
-                [ "$(basename "$SHELL")" != "{{@@ default_shell}}" ] && chsh -s {{@@ default_shell @@}}
-            '
 profiles:
     DobbynciCode:
         variables:
@@ -89,12 +83,11 @@ profiles:
     localhost:
         variables:
             fish_config_dir: ~/.config/fish/config.fish
-        actions:
-            - change_shell
         dotfiles:
             - d_termux
             - f_nvim-default
             - f_gitconfig
+            - f_bashrc
             - f_fish
             - f_fish-greeting
             - f_fastfetch
