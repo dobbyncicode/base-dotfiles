@@ -19,8 +19,8 @@ abbr upr "yay -Syyu --noconfirm && reboot"
 abbr dr "sudo dotdrop install --cfg={{@@ _dotdrop_dotpath.rsplit('/', 1)[0] @@}}/config-root.yaml"
 {%@@ endif @@%}
 
-abbr di "dotdrop install --cfg={{@@ _dotdrop_cfgpath @@}}"
-abbr du "dotdrop update --cfg={{@@           _dotdrop_cfgpath @@}}"
+abbr ddi "dotdrop install --cfg={{@@ _dotdrop_cfgpath @@}}"
+abbr ddu "dotdrop update --cfg={{@@ _dotdrop_cfgpath @@}}"
 abbr gac --set-cursor "git add . && git commit -m \"%\""
 abbr gp "git push -u origin main"
 abbr lla "ls -la"
