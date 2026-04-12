@@ -20,7 +20,7 @@ abbr dr "sudo dotdrop install --cfg={{@@ _dotdrop_dotpath.rsplit('/', 1)[0] @@}}
 {%@@ endif @@%}
 
 abbr di "dotdrop install --cfg={{@@ _dotdrop_cfgpath @@}}"
-abbr du "dotdrop update"
+abbr du "dotdrop update --cfg={{@@           _dotdrop_cfgpath @@}}"
 abbr gac --set-cursor "git add . && git commit -m \"%\""
 abbr gp "git push -u origin main"
 abbr lla "ls -la"
@@ -30,4 +30,5 @@ abbr tla "tree -la -I '.git'"
 set -gx EDITOR {{@@ editor @@}}
 set -gx VISUAL {{@@ editor @@}}
 set -gx DOTDROP_MIME_TEXT application/x-wine-extension-ini
+
 # --- [ i ] - Function section ---
