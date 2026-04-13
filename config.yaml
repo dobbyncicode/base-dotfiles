@@ -65,6 +65,16 @@ dotfiles:
     f_termux-hush:
         src: hushlogin
         dst: ~/.hushlogin
+    f_swappy:
+        src: dotfiles/swappy/config
+        dst: ~/.config/swappy/config
+        link: absolute
+    f_yazi:
+        src: dotfiles/yazi/yazi.toml
+        dst: ~/.config/yazi/yazi.toml
+    f_mise:
+        src: dotfiles/mise/config.toml
+        dst: ~/.config/mise/config.toml
 
 profiles:
     DobbynciCode:
@@ -81,6 +91,9 @@ profiles:
             - f_nvim-default
             - f_yt-dlp
             - f_fish-greeting
+            - f_swappy
+            - f_yazi
+            - f_mise
     localhost:
         variables:
             fish_config_dir: ~/.config/fish/config.fish
@@ -94,3 +107,4 @@ profiles:
             - f_fastfetch
             - f_starship
             - f_termux-hush
+            - f_mise

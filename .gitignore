@@ -1,2 +1,7 @@
+# --- [ i ] - Restrict ---
 cache/
 uservariables.yaml
+Pictures/*
+
+# --- [ i ] - Allow ---
+!Pictures/Wallpapers/

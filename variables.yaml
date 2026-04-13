@@ -3,7 +3,7 @@ variables:
     terminal: "foot"
     browser: "brave"
     volume_control: "pavucontrol"
-    file_manager: "thunar"
+    file_manager: "{{@@ terminal @@}} -a yazi-float yazi"
     editor: "nvim"
 
     # --- [ i ] - User information ---

@@ -4,10 +4,7 @@ starship init fish | source
 alias apt="nala"
 alias ls="eza --icons --group-directories-first -1"
 {%@@ endif @@%}
-
-{%@@ if profile != "localhost" @@%}
 mise activate fish | source
-{%@@ endif @@%}
 
 # --- [ i ] - Abbr section ---
 {%@@ if profile == "localhost" @@%}
@@ -26,9 +23,13 @@ abbr gp "git push -u origin main"
 abbr lla "ls -la"
 abbr tla "tree -la -I '.git'"
 
-# --- [ i ] - Environment variables section ---
-set -gx EDITOR {{@@ editor @@}}
-set -gx VISUAL {{@@ editor @@}}
-set -gx DOTDROP_MIME_TEXT application/x-wine-extension-ini
-
 # --- [ i ] - Function section ---
+
+function yazi
+    set tmp (mktemp -t "yazi-cwd.XXXXXX")
+    command yazi $argv --cwd-file="$tmp"
+    if read -z cwd < "$tmp"; and [ "$cwd" != "$PWD" ]; and test -d "$cwd"
+        builtin cd -- "$cwd"
+    end
+    rm -f -- "$tmp"
+end
