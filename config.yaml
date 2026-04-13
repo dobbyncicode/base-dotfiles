@@ -80,6 +80,7 @@ profiles:
             - f_caelestia-shell
             - f_nvim-default
             - f_yt-dlp
+            - f_fish-greeting
     localhost:
         variables:
             fish_config_dir: ~/.config/fish/config.fish
