@@ -1,10 +1,10 @@
+eval (~/.local/bin/eap activate fish | string collect)
 {%@@ if profile == "localhost" @@%}
 starship init fish | source
 
 alias apt="nala"
 alias ls="eza --icons --group-directories-first -1"
 {%@@ endif @@%}
-mise activate fish | source
 
 # --- [ i ] - Abbr section ---
 {%@@ if profile == "localhost" @@%}

@@ -1,0 +1,9 @@
+[env]
+DOTDROP_MIME_TEXT = "application/x-wine-extension-ini"
+EDITOR = {{@@ editor @@}}
+VISUAL = {{@@ editor @@}}
+
+[path]
+add = [
+    "~/.local/bin"
+]

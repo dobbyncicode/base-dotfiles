@@ -1,0 +1,19 @@
+[zsh]
+env = 'export {k}="{v}";'
+path = 'export PATH="{p}:$PATH";'
+
+[bash]
+env = 'export {k}="{v}";'
+path = 'export PATH="{p}:$PATH";'
+
+[fish]
+env = 'set -gx {k} "{v}";'
+path = 'fish_add_path {p};'
+
+[nu]
+env = '{k} = "{v}"'
+path = 'PATH = ["{p}", ..PATH]'
+
+[default]
+env = 'export {k}="{v}";'
+path = 'export PATH="{p}:$PATH";'
