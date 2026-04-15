@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# --- [ i ] - Disable and reset ---
+sudo ufw disable
+sudo ufw --force reset
+
+# --- [ i ] - Apply rules ---
+sudo ufw default allow outgoing
+sudo ufw default deny incoming
+
+# --- [ i ] - Enable ---
+sudo ufw enable
+sudo chmod 600 /etc/ufw/*.rules
+sudo ufw status numbered

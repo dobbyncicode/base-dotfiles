@@ -6,14 +6,10 @@ variables:
     file_manager: "{{@@ terminal @@}} -a yazi-float yazi"
     editor: "nvim"
 
-    # --- [ i ] - User information ---
-    location: "tigbe"
-    rootpath: "{{@@ _dotdrop_dotpath @@}}"
-    shell: "fish"
-
     # --- [ i ] - Editor information ---
     tab_space: "4"
 
     # --- [ i ] - System information ---
     interactive_shell: fish
     default_shell: bash
+    root_repo: "{{@@ _dotdrop_cfgpath.rsplit('/', 1)[0] @@}}"

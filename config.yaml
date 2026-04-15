@@ -1,6 +1,7 @@
 uservariables:
-    user_email: "email"
-    user_name: "name"
+    user_email: "Email"
+    user_name: "Name"
+    user_location: "Location for weather. Leave blank if not using caelestia shell"
 
 config:
     backup: false
@@ -13,8 +14,9 @@ config:
     longkey: false
     workdir: cache
     import_variables:
-        - variables.yaml
         - uservariables.yaml:optional
+        - variables.yaml
+        
 
 dotfiles:
     d_hypr:

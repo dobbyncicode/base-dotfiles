@@ -538,7 +538,7 @@
     "dragThreshold": 80
   },
   "services": {
-    "weatherLocation": "{{@@ location @@}}",
+    "weatherLocation": "{{@@ user_location @@}}",
     "useFahrenheit": false,
     "useFahrenheitPerformance": false,
     "useTwelveHourClock": true,
