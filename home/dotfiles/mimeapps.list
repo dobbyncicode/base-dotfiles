@@ -1,0 +1,40 @@
+[Default Applications]
+# --- [ i ] - Web ---
+text/html={{@@ browser @@}}-browser.desktop
+x-scheme-handler/http={{@@ browser @@}}-browser.desktop
+x-scheme-handler/https={{@@ browser @@}}-browser.desktop
+x-scheme-handler/about={{@@ browser @@}}-browser.desktop
+x-scheme-handler/unknown={{@@ browser @@}}-browser.desktop
+
+# --- [ i ] - File Manager ---
+inode/directory={{@@ file_manager_mime @@}}.desktop
+
+# --- [ i ] - Editor ---
+text/plain={{@@ editor @@}}.desktop
+application/json={{@@ editor @@}}.desktop
+text/markdown={{@@ editor @@}}.desktop
+application/x-shellscript={{@@ editor @@}}.desktop
+
+# --- [ i ] - Documents ---
+application/pdf={{@@ pdf_viewer @@}}.desktop
+application/epub+zip={{@@ pdf_viewer @@}}.desktop
+
+# --- [ i ] - Media (Images, Video, Audio) ---
+image/jpeg={{@@ media_player @@}}.desktop
+image/png={{@@ media_player @@}}.desktop
+image/gif={{@@ media_player @@}}.desktop
+image/webp={{@@ media_player @@}}.desktop
+image/svg+xml={{@@ media_player @@}}.desktop
+video/mp4={{@@ media_player @@}}.desktop
+video/x-matroska={{@@ media_player @@}}.desktop
+video/webm={{@@ media_player @@}}.desktop
+audio/mpeg={{@@ media_player @@}}.desktop
+audio/flac={{@@ media_player @@}}.desktop
+audio/ogg={{@@ media_player @@}}.desktop
+
+[Added Associations]
+# --- [ i ] - Fallbacks ---
+text/html={{@@ browser @@}}-browser.desktop
+application/pdf={{@@ pdf_viewer @@}}.desktop
+image/jpeg={{@@ media_player @@}}.desktop
+image/png={{@@ media_player @@}}.desktop

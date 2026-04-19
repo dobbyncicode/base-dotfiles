@@ -1,0 +1,308 @@
+#!/bin/bash
+
+log() {
+    printf "\x1b[1m[$program_name]\x1b[0m $1"
+}
+error() {
+    log "\x1b[1m\x1b[31mError:\x1b[37m\x1b[0m $1"
+}
+
+check_exit_code() {
+    exit_code=$?
+    if [[ $exit_code -ne 0 ]]; then
+        printf "\n"
+        error "Previous command exited with non-zero code $exit_code. Continue transaction? (y/N) "
+        read choice
+        if [[ "$choice" != "y" && "$choice" != "Y" ]]; then
+            exit 2
+        fi
+    fi
+}
+
+if [ -n "$APF_REINSTALL" ]; then
+    reinstall=true
+    flatpak_install_args+=" --reinstall"
+fi
+if [ -z "$APF_FUZZY_SEARCH" ]; then
+    fzf_args="--exact"
+fi
+if [ -n "$APF_REMOVE_DEPENDENCIES" ]; then
+    aur_remove_args="--recursive"
+fi
+if [ -n "$APF_FLATPAK_USER" ]; then
+    flatpak_level="user"
+else
+    flatpak_level="system"
+fi
+if [ -n "$APF_WAIT_INTERACTION" ]; then
+    wait_input=true
+fi
+if [ -n "$APF_NO_CONFIRMATION" ]; then
+    aur_install_args="--noconfirm"
+    flatpak_install_args+=" --assumeyes"
+fi
+
+program_name="$(basename "$0")"
+pid="$$"
+help="Usage: $program_name [OPTIONS] [INITIAL QUERY]
+
+OPTIONS:
+    -a, --reinstall        Reinstall already installed packages instead of deleting them. Corresponding environment variable: APF_REINSTALL
+    -f, --fuzzy            Enable fuzzy search. Corresponding environment variable: APF_FUZZY_SEARCH
+    -h, --help             Print this message and exit
+    -i, --installed        Only show installed packages
+    -r, --recursive        Recursively remove unused and not explicitely installed dependencies of AUR packages to remove. Corresponding environment variable: APF_REMOVE_DEPENDENCIES
+    -s, --flatpak-system   Install Flatpak packages system-wide. Default option, only to be used when overwritten by the environment variable APF_FLATPAK_USER
+    -u, --flatpak-user     Install Flatpak packages user-wide instead of system-wide. Corresponding environment variable: APF_FLATPAK_USER
+    -w, --wait             Wait for user interaction to return to the package manager at the end of a command execution
+    -y, --yes              Don't prompt for confirmation when installing packages. You will still be prompted when removing packages. Corresponding environment variable: APF_NO_CONFIRMATION
+
+INITIAL QUERY:
+    Specify this parameter to start fzf with an initial search query."
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -a | --reinstall)
+            reinstall=true
+            flatpak_install_args+=" --reinstall"
+            ;;
+    	-f | --fuzzy) fzf_args="" ;;
+        -h | --help)
+            printf "$help\n"
+            exit 0
+            ;;
+        -i | --installed) filter_installed=true ;;
+        -r | --recursive) aur_remove_args="--recursive" ;;
+        -s | --flatpak-system) flatpak_level="system" ;;
+        -u | --flatpak-user) flatpak_level="user" ;;
+        -w | --wait) wait_input=true ;;
+        -y | --yes)
+            aur_install_args="--noconfirm"
+            flatpak_install_args+=" --assumeyes"
+            ;;
+        -*)
+            printf "$program_name: invalid flag '$1'\n$help\n"
+            exit 1
+            ;;
+        *) initial_query+=("$1") ;;
+    esac
+    shift
+done
+
+cache_dir="$HOME/.cache/apf"
+mkdir -p "$cache_dir"
+aur_only_packages_file="$cache_dir/aur-packages.txt"
+flatpak_packages_file="$cache_dir/flatpak-packages.txt"
+installed_aur_packages="$(mktemp)"
+updatable_aur_packages="$(mktemp)"
+aur_only_packages_gz="$(mktemp)"
+aur_repos="$(mktemp)"
+installed_flatpak_packages="$(mktemp)"
+flatpak_remotes="$(mktemp)"
+
+while choices=$(fzf $fzf_args --multi --no-sort --reverse --query "${initial_query[*]}" --preview 'bash -c '\''
+        get_repo_or_remote_color() {
+            case "$1" in
+                aur) color="34" ;;
+                core) color="33" ;;
+                extra) color="32" ;;
+                flathub) color="35" ;;
+                flathub-beta) color="31" ;;
+                multilib) color="36" ;;
+                *) color="37" ;;
+            esac
+            printf "\x1b[${color}m"
+        }
+
+        choice="{1}"
+        if [ -n "$choice" ] && ! echo "$choice" | grep -q "^Execute"; then
+            repo_or_remote="${choice%%/*}"
+            package_or_id="${choice#*/}"
+            printf "\x1b[1m$(get_repo_or_remote_color "$repo_or_remote")$repo_or_remote\x1b[37m\x1b[0m/\x1b[1m$package_or_id"
+            if grep -q "^$repo_or_remote$" "'"$aur_repos"'"; then
+                if grep -q "^$package_or_id$" "'"$installed_aur_packages"'"; then
+                    printf " \x1b[32m(Installed)"
+                    updatable_entry="$(grep "^$package_or_id " "'"$updatable_aur_packages"'")"
+                    if [ -n "$updatable_entry" ]; then
+                        printf " (Updatable: $(awk "{printf substr(\$0, index(\$0, \$2))}" <(echo "$updatable_entry")))"
+                    fi
+                    printf "\x1b[0m\n\n\x1b[1mLocal information\x1b[0m\n"
+                    yay -Qi "$package_or_id"
+                else
+                    printf "\x1b[0m\n\n\x1b[1mRemote information\x1b[0m\n"
+                    yay -Si "$repo_or_remote/$package_or_id"
+                fi
+            elif grep -q "^$repo_or_remote$" "'"$flatpak_remotes"'"; then
+                if grep -q "^$repo_or_remote/$package_or_id '$flatpak_level'$" "'"$installed_flatpak_packages"'"; then
+                    printf " \x1b[32m(Installed '$flatpak_level'-wide)\x1b[37m\x1b[0m \n"
+                    flatpak info --'$flatpak_level' "$package_or_id"
+                else
+                    printf "\x1b[0m\n"
+                    flatpak remote-info --'$flatpak_level' "$repo_or_remote" "$package_or_id"
+                fi
+                printf "\n"
+            else
+                printf "\n\n\x1b[31mError: source of package $choice is neither a repo nor a Flatpak remote!\x1b[37m"
+            fi
+        fi
+    '\''' --bind 'start,ctrl-p:change-prompt(> )+show-preview+first+reload(bash -c '\''
+        yay -Qq > "'"$installed_aur_packages"'"
+        yay -Qu > "'"$updatable_aur_packages"'"
+        official_only_packages="$(pacman -Sl | awk "{print \$2 \" \" \$1}")"
+        if curl --fail https://aur.archlinux.org/packages.gz -o "'"$aur_only_packages_gz"'"; then
+            gzip -cd "'"$aur_only_packages_gz"'" | awk "{print \$1 \" aur\"}" > "'"$aur_only_packages_file"'"
+        fi
+        aur_only_packages="$(<"'"$aur_only_packages_file"'")"
+        printf -v unformatted_aur_packages "%s\n%s" "$official_only_packages" "$aur_only_packages"
+        echo "$unformatted_aur_packages" | awk "{print tolower(\$2)}" | sort -u > "'"$aur_repos"'"
+        aur_packages="$(awk "FILENAME==ARGV[1] {updatable[\$1]; next} FILENAME==ARGV[2] {installed[\$0]; next} {printf tolower(\$2) \"/\" \$1; if (\$1 in updatable) printf \" (↑)\"; else if (\$1 in installed) printf \" (*)\"; print \"\"}" "'"$updatable_aur_packages"'" "'"$installed_aur_packages"'" <(echo "$unformatted_aur_packages"))"
+        if [ -n "'"$filter_installed"'" ]; then
+            aur_packages="$(echo "$aur_packages" | grep " (\*)")"
+        fi
+        echo "$aur_packages" | grep -v "^aur/"
+        echo "$(flatpak list --columns=application,origin,installation)" | awk "{print \$2 \"/\" \$1 \" \" \$3}" > "'"$installed_flatpak_packages"'"
+        flatpak remotes --columns=name > "'"$flatpak_remotes"'"
+        unformatted_flatpak_packages="$(flatpak remote-ls --app --columns=application,origin)"
+        if [ -n "$unformatted_flatpak_packages" ]; then
+            echo "$unformatted_flatpak_packages" > "'"$flatpak_packages_file"'"
+        else
+            unformatted_flatpak_packages="$(<"'"$flatpak_packages_file"'")"
+        fi
+        flatpak_packages="$(awk "FILENAME==ARGV[1] {split(\$0, parts); installed[parts[1]] = parts[2]; next} !seen[\$2 \"/\" \$1]++ {key = \$2 \"/\" \$1; printf key; if (installed[key]) printf \" (%s)\", installed[key]; print \" \"}" "'"$installed_flatpak_packages"'" "'"$flatpak_packages_file"'" | sed "s|/|\\x01|g" | LC_COLLATE=C sort | sed "s|\\x01|/|g")"
+        if [ -n "'"$filter_installed"'" ]; then
+            flatpak_packages="$(echo "$flatpak_packages" | grep -E "'" \(\*.*\)"'")"
+        fi
+        echo "$flatpak_packages"
+        echo "$aur_packages" | grep "^aur/"
+    '\'')' --bind 'load,focus,multi:change-footer-label(Press <Ctrl-H> to view shortcuts)+transform-footer(bash -c '\''
+        if grep -q "^Execute" "{+f}"; then
+            printf "\n"
+        else
+            cat "{+f}" | while read -r selected_choice; do
+                if [ -z "$selected_choice" ]; then
+                    printf "\n"
+                else
+                    selected_full_package_name="${selected_choice%% *}"
+                    repo_or_remote="${selected_full_package_name%%/*}"
+                    package_or_id="${selected_full_package_name#*/}"
+                    if { grep -q "^$repo_or_remote$" "'"$aur_repos"'" && grep -q "^$package_or_id$" "'"$installed_aur_packages"'"; } || \
+                        { grep -q "^$repo_or_remote$" "'"$flatpak_remotes"'" && grep -q "^$repo_or_remote/$package_or_id '$flatpak_level'$" "'"$installed_flatpak_packages"'"; }; then
+                        if [ -n "'"$reinstall"'" ]; then
+                            printf "reinstall"
+                        else
+                            printf "\x1b[1m\x1b[31mremove\x1b[37m\x1b[0m"
+                            if [ -z "'"$reinstall"'" ] && grep -q "^$package_or_id$" "'"$installed_aur_packages"'" && [[ "'"$aur_remove_args"'" == *"--recursive"* ]]; then
+                                printf " (also unused deps)"
+                            fi
+                        fi
+                    else
+                        printf "install"
+                    fi
+                    printf ": \x1b[1m$repo_or_remote\x1b[37m\x1b[0m/\x1b[1m$package_or_id\x1b[0m"
+                    if grep -q "^$repo_or_remote$" "'"$flatpak_remotes"'"; then
+                        printf " "
+                    fi
+                    printf "\n"
+                fi
+            done
+        fi
+    '\'')' --bind 'ctrl-h:change-footer-label(Change focus to hide)+transform-footer(bash -c '\''
+        if grep -q "^Execute" "{+f}"; then
+            printf "<Enter> Execute commands  <Ctrl-P> Package manager  <Tab> Multi-select  <Alt-A> Toggle all"
+        else
+            printf "<Enter> Execute transaction   <Ctrl-S> Reinstall\n<Alt-I> Show installed        <Ctrl-E> Run update\n<Alt-U> Show updatable (yay)  <Tab> Multi-select"
+        fi
+    '\'')' --bind 'ctrl-e:change-prompt(Select commands > )+hide-preview+first+reload(
+        echo "Execute yay -Sy\nExecute yay -Su\nExecute flatpak update --system\nExecute flatpak update --user\nExecute sudo pacman -Sy\nExecute sudo pacman -Su"
+    )' --bind 'alt-i:transform-query(
+        echo "(*) | (↑) | ('"$flatpak_level"') "{q}
+    )' --bind 'alt-u:transform-query(
+        echo "(↑) "{q}
+    )' --bind 'ctrl-s:print(:reinstall)+accept-non-empty' --bind 'alt-a:toggle-all' --bind 'double-click,enter:accept-non-empty' --bind 'change:first'
+    ); do
+
+    if [ -n "$choices" ]; then
+        update_commands=()
+        aur_packages_to_remove=""
+        aur_packages_to_install=""
+        flatpak_packages_to_remove=""
+        unset flatpak_packages_to_install
+	declare -A flatpak_packages_to_install
+        if echo "$choices" | grep -q "^:reinstall$"; then
+            reinstall_once=true
+            choices="${choices#*$'\n'}"
+        fi
+        while read -r choice; do
+            if echo "$choice" | grep -q "^Execute "; then
+                update_commands+=("${choice#* }")
+            else
+                full_package_name="${choice%% *}"
+                repo_or_remote="${full_package_name%%/*}"
+                package_or_id="${full_package_name#*/}"
+                if grep -q "^$repo_or_remote$" "$aur_repos"; then
+                    if [[ -z "$reinstall" && -z "$reinstall_once" ]] && grep -q "^$package_or_id$" "$installed_aur_packages"; then
+                        aur_packages_to_remove+="$package_or_id "
+                    else
+                        aur_packages_to_install+="$repo_or_remote/$package_or_id "
+                    fi
+                elif grep -q "^$repo_or_remote$" "$flatpak_remotes"; then
+                    if [[ -z "$reinstall" && -z "$reinstall_once" ]] && grep -q "^$repo_or_remote/$package_or_id $flatpak_level$" "$installed_flatpak_packages"; then
+                        flatpak_packages_to_remove+="$package_or_id "
+                    else
+                        flatpak_packages_to_install["$repo_or_remote"]+="$package_or_id "
+                    fi
+                else
+                    error "source of package $full_package_name is neither a repo nor a Flatpak remote!\n"
+                fi
+            fi
+        done <<< "$choices"
+        if [ -n "$update_commands" ]; then
+            printf "\n"
+            for update_command in "${update_commands[@]}"; do
+                log "Executing command \x1b[1m$update_command\x1b[0m\n"
+                $update_command
+                printf "\n"
+            done
+        fi
+        if [ -n "$aur_packages_to_remove" ]; then
+            printf "\n"
+            log "Official and AUR packages to \x1b[1m\x1b[31mremove\x1b[37m\x1b[0m"
+            if [[ "'"$aur_remove_args"'" == *"--recursive"* ]]; then
+                printf " (also remove unused dependencies)"
+            fi
+            printf ": \x1b[1m$aur_packages_to_remove\x1b[0m\n"
+            yay -R $aur_remove_args ${aur_packages_to_remove::-1}
+            check_exit_code
+        fi
+        if [ -n "$aur_packages_to_install" ]; then
+            printf "\n"
+            log "Official and AUR packages to install: \x1b[1m$aur_packages_to_install\x1b[0m\n"
+            yay -S $aur_install_args ${aur_packages_to_install::-1}
+            check_exit_code
+        fi
+        if [ -n "$flatpak_packages_to_remove" ]; then
+            printf "\n"
+            log "Flatpak packages to \x1b[1m\x1b[31mremove\x1b[37m\x1b[0m ($flatpak_level-wide): \x1b[1m$flatpak_packages_to_remove\x1b[0m\n"
+            flatpak uninstall --$flatpak_level ${flatpak_packages_to_remove::-1}
+            check_exit_code
+        fi
+        for remote in "${!flatpak_packages_to_install[@]}"; do
+            if [[ -n "${flatpak_packages_to_install["$remote"]}" ]]; then
+                packages="${flatpak_packages_to_install["$remote"]::-1}"
+                printf "\n"
+                log "Flatpak packages to install from remote $remote ($flatpak_level-wide): \x1b[1m$packages\x1b[0m\n"
+                flatpak install $flatpak_install_args --$flatpak_level "$remote" $packages
+                check_exit_code
+            fi
+        done
+        if [ -n "$wait_input" ]; then
+            printf "\n"
+            log "Press Enter to return to package manager"
+            read -s
+            printf "\n"
+        fi
+    fi
+done
+
+rm "$installed_aur_packages" "$updatable_aur_packages" "$aur_only_packages_gz" "$aur_repos" "$installed_flatpak_packages" "$flatpak_remotes"
+printf "\x1b[0m"

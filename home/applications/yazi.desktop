@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Yazi
+Comment=Terminal File Manager
+Exec={{@@ file_manager @@}}
+Icon=folder
+Terminal=false
+Categories=System;FileManagement;
+MimeType=inode/directory;

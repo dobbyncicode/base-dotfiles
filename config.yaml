@@ -74,9 +74,24 @@ dotfiles:
     f_yazi:
         src: dotfiles/yazi/yazi.toml
         dst: ~/.config/yazi/yazi.toml
+        actions:
+            - create_yazi_desktop
     f_eap:
         src: dotfiles/eap/config.toml
         dst: ~/.config/eap/config.toml
+    f_mimeapps:
+        src: dotfiles/mimeapps.list
+        dst: ~/.config/mimeapps.list
+    f_test:
+        src: test.txt
+        dst: ~/test.txt
+    f_packages:
+        src: packages
+        dst: ~/.local/bin/packages
+
+actions:
+    post:
+        create_yazi_desktop: "[[ -f ~/.local/share/applications/yazi.desktop ]] || cat {{@@ _dotdrop_dotpath @@}}/applications/yazi.desktop > ~/.local/share/applications/yazi.desktop"
 
 profiles:
     DobbynciCode:
@@ -96,6 +111,9 @@ profiles:
             - f_swappy
             - f_yazi
             - f_eap
+            - f_mimeapps
+            - f_test
+            - f_packages
     localhost:
         variables:
             fish_config_dir: ~/.config/fish/config.fish

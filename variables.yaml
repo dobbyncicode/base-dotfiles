@@ -5,6 +5,9 @@ variables:
     volume_control: "pavucontrol"
     file_manager: "{{@@ terminal @@}} -a yazi-float yazi"
     editor: "nvim"
+    file_manager_mime: "yazi"
+    media_player: "mpv"
+    pdf_viewer: "org.pwmt.zathura"
 
     # --- [ i ] - Editor information ---
     tab_space: "4"

@@ -1,0 +1,362 @@
+#!/usr/bin/env python3
+"""Package manager with fzf interface for pacman, aur, flatpak."""
+
+import argparse
+import configparser
+import os
+import shutil
+import subprocess
+import tempfile
+
+
+def run(cmd, capture=True, check=True, timeout=30):
+    kw = {"shell": True, "timeout": timeout}
+    if capture:
+        kw["capture_output"] = True
+    if not check:
+        kw["check"] = False
+    out = subprocess.run(cmd, **kw)
+    return out.stdout.decode().strip() if capture else out.returncode == 0
+
+
+def get_config():
+    cfg = configparser.ConfigParser()
+    path = os.path.expanduser("~/.config/packages.conf")
+    if os.path.exists(path):
+        cfg.read(path)
+    return cfg
+
+
+def save_config(key, value):
+    cfg = get_config()
+    if not cfg.has_section("main"):
+        cfg.add_section("main")
+    cfg.set("main", key, value)
+    os.makedirs(os.path.expanduser("~/.config"), exist_ok=True)
+    with open(os.path.expanduser("~/.config/packages.conf"), "w") as f:
+        cfg.write(f)
+
+
+def detect_aur_helpers():
+    helpers = []
+    for prog in ["yay", "paru", "trizen", "pamac", "aurman"]:
+        if shutil.which(prog):
+            helpers.append(prog)
+    return helpers
+
+
+def pick_aur_helper(helpers):
+    if len(helpers) == 0:
+        return None
+    if len(helpers) == 1:
+        return helpers[0]
+
+    cfg = get_config()
+    saved = cfg.get("main", "aur_helper", fallback=None)
+    if saved and saved in helpers:
+        return saved
+
+    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".txt") as f:
+        f.write("\n".join(helpers))
+        f.write("\n*set default")
+        tmp = f.name
+
+    result = run(f"fzf --prompt='AUR helper > ' < {tmp}", capture=False)
+    os.unlink(tmp)
+
+    if result == "*set default":
+        chosen = helpers[0]
+    elif result:
+        chosen = result.strip()
+    else:
+        chosen = helpers[0]
+
+    if input(f"Save '{chosen}' as default? (y/N) ").lower() == "y":
+        save_config("aur_helper", chosen)
+
+    return chosen
+
+
+def get_official():
+    return set(run("pacman -Qq").splitlines())
+
+
+def get_aur(helper):
+    return run(f"{helper} -Qq").splitlines()
+
+
+def get_user_aur(helper):
+    official = get_official()
+    return [p for p in get_aur(helper) if p not in official]
+
+
+def get_flatpak(level="system"):
+    lines = run(f"flatpak list --{level} --columns=application,origin").splitlines()
+    return [(parts[1], parts[0]) for line in lines if len((parts := line.split())) >= 2]
+
+
+def get_repo_packages():
+    lines = run("pacman -Sl | awk '{print $2 \" \" $1}'")
+    return {p.split()[1]: p.split()[0] for p in lines.splitlines()}
+
+
+def get_updatable(helper):
+    lines = run(f"{helper} -Qu")
+    return {p.split()[0]: p.split()[1] for p in lines.splitlines() if p.strip()}
+
+
+def get_orphans(helper):
+    return run(f"{helper} -Qdtq").splitlines()
+
+
+def info(helper, repo, pkg, flatpak_level):
+    if repo == "aur":
+        return run(f"{helper} -Qi {pkg}")
+    elif repo in ("flathub", "flathub-beta"):
+        return run(f"flatpak info --{flatpak_level} {pkg}")
+    else:
+        return run(f"pacman -Qi {repo}/{pkg}")
+
+
+def install(packages, helper, flatpak_level):
+    if not packages:
+        return
+    by = {}
+    for p in packages:
+        src = p.split("/")[0]
+        by.setdefault(src, []).append(p.split("/", 1)[1])
+    for src, pkgs in by.items():
+        if src == "aur":
+            run(f"{helper} -S {' '.join(pkgs)}")
+        else:
+            run(f"flatpak install --{flatpak_level} {src} {' '.join(pkgs)}")
+
+
+def remove(packages, helper, flatpak_level):
+    if not packages:
+        return
+    by = {}
+    for p in packages:
+        src = p.split("/")[0]
+        by.setdefault(src, []).append(p.split("/", 1)[1])
+    for src, pkgs in by.items():
+        if src == "aur":
+            run(f"{helper} -Rns {' '.join(pkgs)}", check=False)
+        else:
+            run(f"flatpak uninstall --{flatpak_level} {' '.join(pkgs)}", check=False)
+
+
+def rebuild(packages, helper):
+    if not packages:
+        return
+    for pkg in packages:
+        run(f"{helper} -S --rebuild {pkg}")
+
+
+def nuke(packages, helper):
+    if not packages:
+        return
+    for pkg in packages:
+        run(f"{helper} -Rdd {pkg}", check=False)
+
+
+def parse_show(s):
+    if not s or s == "e" or s == "everything":
+        return {"aur", "flatpak", "pacman", "system"}
+    if s == "a" or s == "aur":
+        return {"aur"}
+    if s == "f" or s == "flatpak":
+        return {"flatpak"}
+    if s == "p" or s == "pacman":
+        return {"pacman"}
+    if s == "s" or s == "system":
+        return {"system"}
+    return set()
+
+
+def parse_show_mode(s):
+    if not s:
+        s = "everything:installed"
+    if ":" in s:
+        base, mode = s.rsplit(":", 1)
+        sources = parse_show(base)
+        installed_only = mode == "installed"
+    else:
+        sources = parse_show(s)
+        installed_only = True
+    return sources, installed_only
+
+
+def parse_sort(s):
+    if not s:
+        s = "size:reverse"
+
+    base = s
+    reverse = False
+    if ":reverse" in s:
+        base = s.replace(":reverse", "")
+        reverse = True
+    elif s.endswith(":r"):
+        base = s[:-2]
+        reverse = True
+
+    if base in ("s", "size"):
+        return "size", reverse
+    if base in ("n", "name"):
+        return "name", reverse
+    if base in ("c", "created"):
+        return "created", reverse
+    if base in ("m", "modified"):
+        return "modified", reverse
+    return "size", True
+
+
+def sort_items(items, key, reverse):
+    if key == "name":
+        items.sort(key=lambda x: x[1].lower(), reverse=reverse)
+    elif key == "size":
+        items.sort(key=lambda x: x[2], reverse=not reverse)
+    elif key == "created":
+        items.sort(key=lambda x: x[3], reverse=not reverse)
+    elif key == "modified":
+        items.sort(key=lambda x: x[4], reverse=not reverse)
+
+
+def build_items(show_set, installed_only, helper, flatpak_level):
+    items = []
+    repos = get_repo_packages()
+    updatable = get_updatable(helper) if helper else {}
+
+    if "aur" in show_set:
+        aur_pkgs = get_user_aur(helper) if installed_only else get_aur(helper)
+        for pkg in aur_pkgs:
+            status = ""
+            if pkg in updatable:
+                status = f" (up: {updatable[pkg]})"
+            items.append(("aur", pkg, status, "", ""))
+
+    if "flatpak" in show_set or "system" in show_set:
+        sys_pkgs = get_flatpak("system")
+        usr_pkgs = get_flatpak("user")
+        for src, name in sys_pkgs:
+            if not installed_only:
+                items.append(("flatpak", name, f"[system]", "", ""))
+        for src, name in usr_pkgs:
+            status = "[user]" if "system" not in show_set else ""
+            if not installed_only or "system" in show_set:
+                items.append(("flatpak", name, status, "", ""))
+
+    if "pacman" in show_set:
+        official = get_official()
+        for pkg in official:
+            repo = repos.get(pkg, "unknown")
+            status = ""
+            if repo in ("core", "extra", "multilib"):
+                if pkg in updatable:
+                    status = f" (up: {updatable[pkg]})"
+                items.append((repo, pkg, status, "", ""))
+
+    return items
+
+
+def main():
+    ap = argparse.ArgumentParser(description="Package manager with fzf")
+    ap.add_argument("query", nargs="?", default="", help="Initial fzf query")
+    ap.add_argument("-d", "--show-deps", action="store_true", help="Show dependencies")
+    ap.add_argument("--show", default="everything:installed", help="what to show")
+    ap.add_argument("--sort", default="size:reverse", help="sort order")
+    ap.add_argument("-r", "--rebuild", action="store_true", help="Force rebuild")
+    ap.add_argument("--nuke", action="store_true", help="Nuke packages")
+    ap.add_argument("-y", "--yes", action="store_true", help="Skip confirmations")
+    ap.add_argument("-w", "--wait", action="store_true", help="Wait before exit")
+    args = ap.parse_args()
+
+    show_set, installed_only = parse_show_mode(args.show)
+    sort_key, sort_reverse = parse_sort(args.sort)
+
+    helpers = detect_aur_helpers()
+    helper = pick_aur_helper(helpers) if "aur" in show_set or "pacman" in show_set else None
+    flatpak_level = "system"
+
+    items = build_items(show_set, installed_only, helper, flatpak_level)
+    sort_items(items, sort_key, sort_reverse)
+
+    if not items:
+        print("No packages found.")
+        return
+
+    if args.rebuild or args.nuke:
+        mode = "rebuild" if args.rebuild else "nuke"
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".txt") as f:
+            for repo, name, *rest in items:
+                f.write(f"{repo}/{name}\n")
+            tmp = f.name
+
+        fzf = shutil.which("fzf")
+        cmd = f"{fzf} --multi --no-sort --reverse --prompt='{mode} > ' --query='{args.query}'"
+        result = run(cmd + f" < {tmp}", capture=False)
+        os.unlink(tmp)
+
+        if result:
+            choices = [c.strip() for c in result.strip().split("\n") if c.strip()]
+            if args.yes or input(f"{mode.title()} {len(choices)} package(s)? (y/N) ").lower() == "y":
+                if args.rebuild:
+                    rebuild(choices, helper)
+                else:
+                    nuke(choices, helper)
+        if args.wait:
+            input("Press Enter to continue...")
+        return
+
+    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".txt") as f:
+        for repo, name, status, *rest in items:
+            f.write(f"{repo}/{name} {status}\n")
+        tmp = f.name
+
+    helper_bin = helper or "yay"
+    preview = f"bash -c 'repo=${{{{1}}%/*}}; pkg=${{{{1}}#*/}}; pkg=${{{{pkg%% *}}; {helper_bin} -Qi \"$pkg\" 2>/dev/null || pacman -Qi \"$repo/$pkg\" 2>/dev/null || flatpak info \"$pkg\"'"
+
+    fzf = shutil.which("fzf")
+    cmd = f"{fzf} --multi --no-sort --reverse --preview-threads --preview={preview} --bind=ctrl-p:toggle-preview --prompt='package > ' --query='{args.query}'"
+
+    result = run(cmd + f" < {tmp}", capture=False)
+    os.unlink(tmp)
+
+    if not result:
+        return
+
+    choices = [c.strip() for c in result.strip().split("\n") if c.strip()]
+    to_install = []
+    to_remove = []
+    installed_aur = set(get_user_aur(helper)) if helper else set()
+    installed_flat = set(n for _, n in get_flatpak(flatpak_level))
+
+    for choice in choices:
+        if not choice:
+            continue
+        repo, pkg = choice.split("/", 1)
+        pkg = pkg.split()[0]
+
+        is_installed = (repo == "aur" and pkg in installed_aur) or (repo == "flatpak" and pkg in installed_flat)
+
+        if is_installed:
+            to_remove.append(f"{repo}/{pkg}")
+        else:
+            to_install.append(f"{repo}/{pkg}")
+
+    if to_install:
+        if args.yes or input(f"Install {len(to_install)} package(s)? (y/N) ").lower() == "y":
+            install(to_install, helper, flatpak_level)
+            print(f"Installed {len(to_install)} package(s).")
+
+    if to_remove:
+        if args.yes or input(f"Remove {len(to_remove)} package(s)? (y/N) ").lower() == "y":
+            remove(to_remove, helper, flatpak_level)
+            print(f"Removed {len(to_remove)} package(s).")
+
+    if args.wait:
+        input("Press Enter to continue...")
+
+
+if __name__ == "__main__":
+    main()

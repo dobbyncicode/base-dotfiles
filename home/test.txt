@@ -1,0 +1,3 @@
+actions:
+    post: 
+        create_yazi_desktop: "bash -c [[ -f ~/.local/share/applications/yazi.desktop ]] || cat {{@@ _dotdrop_dotpath @@}}/applications/yazi.desktop > ~/.local/share/applications/yazi.desktop"
