@@ -12,7 +12,7 @@ fzf --fish | source
 
 # --- [ i ] - Abbr section ---
 {%@@ if profile == "localhost" @@%}
-abbr upup "apt upgrade --asume-yes --full"
+abbr upup "apt upgrade --assume-yes --full"
 {%@@ endif @@%}
 {%@@ if profile != "localhost" @@%}
 abbr upo "yay -Syyu --noconfirm && poweroff"
