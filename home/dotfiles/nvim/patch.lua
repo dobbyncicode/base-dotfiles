@@ -12,12 +12,12 @@ safe("editor", function()
     vim.opt.relativenumber = true
 
     vim.opt.list = true
-    vim.opt.listchars = {
+    vim.opt.listchars:append({
         tab = "→ ",
         trail = "·",
         nbsp = "␣",
         lead = "·",
-    }
+    })
 
     vim.opt.expandtab = true
     vim.opt.tabstop = {{@@ tab_space @@}}
@@ -81,8 +81,8 @@ safe("ui", function()
     vim.opt.pumblend = 10
     vim.opt.winblend = 10
     vim.opt.shortmess:append("c")
-    vim.opt.fillchars = { eob = " " }
     vim.opt.fillchars:append({
+        eob = " ",
         horiz = "━",
         horizup = "┻",
         horizdown = "┳",
@@ -122,12 +122,26 @@ safe("autocmds", function()
     })
 
     local clear_bg = function()
-        for _, g in ipairs({ "Normal", "NormalNC", "NormalFloat", "SignColumn", "EndOfBuffer" }) do
-            vim.api.nvim_set_hl(0, g, { bg = "NONE", ctermbg = "NONE" })
-        end
+        vim.schedule(function()
+            local groups = {
+                "Normal", "NormalNC", "NormalFloat", "FloatBorder",
+                "SignColumn", "EndOfBuffer", "MsgArea", "Pmenu",
+                "NormalSB", "SignColumnSB", "EndOfBufferSB",
+                "WinBar", "WinBarNC", "WinSeparator", "VertSplit",
+                "TelescopeNormal", "TelescopeBorder",
+                "NvimTreeNormal", "NvimTreeNormalNC", "NvimTreeWinSeparator", "NvimTreeEndOfBuffer",
+                "NeoTreeNormal", "NeoTreeNormalNC", "NeoTreeWinSeparator", "NeoTreeEndOfBuffer", "NeoTreeFloatNormal", "NeoTreeFloatBorder"
+            }
+            for _, g in ipairs(groups) do
+                vim.api.nvim_set_hl(0, g, { bg = "NONE", ctermbg = "NONE" })
+            end
+        end)
     end
     clear_bg()
-    vim.api.nvim_create_autocmd("ColorScheme", { pattern = "*", callback = clear_bg })
+    vim.api.nvim_create_autocmd({ "ColorScheme", "WinEnter", "BufEnter" }, {
+        pattern = "*",
+        callback = clear_bg
+    })
 end)
 
 -- --- [ i ] - Diagnostics ---
@@ -147,9 +161,13 @@ end)
 
 -- --- [ i ] - Statusline (only if no plugin handles it) ---
 safe("statusline", function()
-    for _, p in ipairs({ "lualine", "heirline", "feline", "staline" }) do
+    -- check for common statusline plugins
+    for _, p in ipairs({ "lualine", "heirline", "feline", "staline", "mini.statusline" }) do
         if pcall(require, p) then return end
     end
+    -- also check if statusline is already set by something else
+    if vim.opt.statusline:get() ~= "" then return end
+
     vim.opt.laststatus = 3
     vim.opt.showmode = false
     _G._patch_stl = function() return " %f %y %m %= %l:%c " end

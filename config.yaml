@@ -82,12 +82,6 @@ dotfiles:
     f_mimeapps:
         src: dotfiles/mimeapps.list
         dst: ~/.config/mimeapps.list
-    f_test:
-        src: test.txt
-        dst: ~/test.txt
-    f_packages:
-        src: packages
-        dst: ~/.local/bin/packages
 
 actions:
     post:
@@ -112,8 +106,6 @@ profiles:
             - f_yazi
             - f_eap
             - f_mimeapps
-            - f_test
-            - f_packages
     localhost:
         variables:
             fish_config_dir: ~/.config/fish/config.fish
