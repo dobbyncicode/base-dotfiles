@@ -30,6 +30,14 @@ dotfiles:
         src: termux
         dst: ~/.termux
         link: absolute
+    d_xdg-icons:
+        src: theme-resources
+        dst: ~/.local/share/icons
+        link: absolute
+    d_icons:
+        src: theme-resources
+        dst: ~/.icons
+        link: absolute
     f_bashrc:
         src: bashrc
         dst: ~/.bashrc
@@ -44,7 +52,6 @@ dotfiles:
         src: gitconfig
         dst: ~/.gitconfig
         link: absolute
-        template: true
     f_caelestia-shell:
         src: dotfiles/caelestia/shell.json
         dst: ~/.config/caelestia/shell.json
@@ -82,6 +89,19 @@ dotfiles:
     f_mimeapps:
         src: dotfiles/mimeapps.list
         dst: ~/.config/mimeapps.list
+    f_gtk-3:
+        src: dotfiles/gtk-theming.ini
+        dst: ~/.config/gtk-3.0/settings.ini
+    f_gtk-4:
+        src: dotfiles/gtk-theming.ini
+        dst: ~/.config/gtk-4.0/settings.ini
+    f_cursor-fallback:
+        src: cursor-theme
+        dst: ~/.icons/default/index.theme
+    f_yay:
+        src: dotfiles/yay/config.json
+        dst: ~/.config/yay/config.json
+        link: absolute
 
 actions:
     post:
@@ -94,6 +114,8 @@ profiles:
         dotfiles:
             - d_hypr
             - d_pictures
+            - d_icons
+            - d_xdg-icons
             - f_bashrc
             - f_caelestia-hypr
             - f_fish
@@ -106,6 +128,10 @@ profiles:
             - f_yazi
             - f_eap
             - f_mimeapps
+            - f_cursor-fallback
+            - f_gtk-3
+            - f_gtk-4
+            - f_yay
     localhost:
         variables:
             fish_config_dir: ~/.config/fish/config.fish

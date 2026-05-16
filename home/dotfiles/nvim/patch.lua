@@ -113,6 +113,7 @@ safe("autocmds", function()
         callback = function() vim.highlight.on_yank({ timeout = 200 }) end,
     })
 
+
     local cl = vim.api.nvim_create_augroup("PatchCursorLine", { clear = true })
     vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
         group = cl, command = "setlocal cursorline",
@@ -144,6 +145,15 @@ safe("autocmds", function()
     })
 end)
 
+vim.api.nvim_create_autocmd("FileType", {
+        pattern = "*",
+        callback = function()
+            vim.opt_local.expandtab = true
+            vim.opt_local.tabstop = {{@@ tab_space @@}}
+            vim.opt_local.shiftwidth = {{@@ tab_space @@}}
+            vim.opt_local.softtabstop = {{@@ tab_space @@}}
+        end,
+    })
 -- --- [ i ] - Diagnostics ---
 safe("diagnostics", function()
     local s = vim.diagnostic.severity

@@ -2,6 +2,8 @@
 DOTDROP_MIME_TEXT = "application/x-wine-extension-ini"
 EDITOR = "{{@@ editor @@}}"
 VISUAL = "{{@@ editor @@}}"
+MANPAGER = "nvim +Man!"
+MANWIDTH = "999"
 
 [path]
 add = [

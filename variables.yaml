@@ -13,6 +13,11 @@ variables:
     tab_space: "4"
 
     # --- [ i ] - System information ---
-    interactive_shell: fish
-    default_shell: bash
+    interactive_shell: "fish"
+    default_shell: "bash"
     root_repo: "{{@@ _dotdrop_cfgpath.rsplit('/', 1)[0] @@}}"
+
+    # --- [ i ] - Theming ---
+    cursor_theme: "Bibata-Modern-Ice"
+    cursor_size: "24"
+    icon_theme: "DeepenOS-Icons-Theme"
