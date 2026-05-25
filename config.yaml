@@ -31,13 +31,25 @@ dotfiles:
         dst: ~/.termux
         link: absolute
     d_xdg-icons:
-        src: theme-resources
+        src: theme-resources/icons
         dst: ~/.local/share/icons
         link: absolute
     d_icons:
-        src: theme-resources
+        src: theme-resources/icons
         dst: ~/.icons
         link: absolute
+    d_fonts:
+        src: theme-resources/fonts
+        dst: ~/.local/share/fonts
+        link: absolute
+        actions:
+            - refresh_fonts
+    d_yazi:
+        src: dotfiles/yazi
+        dst: ~/.config/yazi
+        link: absolute
+        actions:
+            - create_yazi_desktop
     f_bashrc:
         src: bashrc
         dst: ~/.bashrc
@@ -78,11 +90,6 @@ dotfiles:
         src: dotfiles/swappy/config
         dst: ~/.config/swappy/config
         link: absolute
-    f_yazi:
-        src: dotfiles/yazi/yazi.toml
-        dst: ~/.config/yazi/yazi.toml
-        actions:
-            - create_yazi_desktop
     f_eap:
         src: dotfiles/eap/config.toml
         dst: ~/.config/eap/config.toml
@@ -106,6 +113,7 @@ dotfiles:
 actions:
     post:
         create_yazi_desktop: "[[ -f ~/.local/share/applications/yazi.desktop ]] || cat {{@@ _dotdrop_dotpath @@}}/applications/yazi.desktop > ~/.local/share/applications/yazi.desktop"
+        refresh_fonts: "fc-cache -fv"
 
 profiles:
     DobbynciCode:
@@ -116,6 +124,8 @@ profiles:
             - d_pictures
             - d_icons
             - d_xdg-icons
+            - d_fonts
+            - d_yazi
             - f_bashrc
             - f_caelestia-hypr
             - f_fish
@@ -125,7 +135,6 @@ profiles:
             - f_yt-dlp
             - f_fish-greeting
             - f_swappy
-            - f_yazi
             - f_eap
             - f_mimeapps
             - f_cursor-fallback
