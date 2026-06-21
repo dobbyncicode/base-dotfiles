@@ -1,4 +1,13 @@
 -- --- [ i ] - Autostart -
 hl.on("hyprland.start", function()
     hl.exec_cmd("syncthing")
+    hl.exec_cmd("hyprctl setcursor {{@@ cursor_theme @@}} {{@@ cursor_size @@}}")
+    hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-theme {{@@ cursor_theme @@}}")
+    hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-size {{@@ cursor_size @@}}")
+    hl.exec_cmd("gsettings set org.gnome.desktop.interface icon-theme {{@@ icon_theme @@}}")
+    hl.exec_cmd("flatpak override --user --filesystem=~/.icons:ro")
+    hl.exec_cmd("flatpak override --user --filesystem=~/.local/share/icons:ro")
+    hl.exec_cmd("flatpak override --user --env=XCURSOR_THEME={{@@ cursor_theme @@}}")
+    hl.exec_cmd("flatpak override --user --env=XCURSOR_SIZE={{@@ cursor_size @@}}")
+    hl.exec_cmd("flatpak override --user --env=ICON_THEME={{@@ icon_theme @@}}")
 end)

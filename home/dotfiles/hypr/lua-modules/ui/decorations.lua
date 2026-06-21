@@ -26,12 +26,11 @@ hl.config({
 			input_methods = false,
 		},
 
-		shadow = {
-			enabled = true,
-			range = 4,
-			render_power = 2,
-			sharp = false,
-			ignore_window = true,
-		}
+    shadow = {
+        enabled = true,
+        range = 4,
+        render_power = 2,
+        sharp = false,
+    }
 	}
 })

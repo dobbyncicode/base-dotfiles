@@ -7,7 +7,9 @@ alias ls="eza --icons --group-directories-first -1"
 {%@@ endif @@%}
 
 {%@@ if profile != "localhost" @@%}
-fzf --fish | source
+if command -v fzf &> /dev/null
+    fzf --fish | source
+end
 {%@@ endif @@%}
 
 # --- [ i ] - Abbr section ---

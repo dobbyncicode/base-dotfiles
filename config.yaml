@@ -165,3 +165,22 @@ profiles:
             - f_termux-hush
             - f_eap
             - f_eap-shells
+    BasicInstall:
+        variables:
+            fish_config_dir: ~/.config/fish/config.fish
+        dotfiles:
+            - d_pictures
+            - d_icons
+            - d_xdg-icons
+            - d_fonts
+            - f_bashrc
+            - f_gitconfig
+            - f_fish
+            - f_nvim-default
+            - f_eap
+            - f_mimeapps
+            - f_cursor-fallback
+            - f_gtk-3
+            - f_gtk-4
+            - f_fontconfig
+            - f_eap-shells

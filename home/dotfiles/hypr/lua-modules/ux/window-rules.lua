@@ -2,12 +2,13 @@
 hl.window_rule({
     name = "browser-things",
     match = { class = "^([Ff]irefox|[Gg]oogle-[Cc]hrome|[Bb]rave-[Bb]rowser|[Cc]hromium)$" },
-    opacity = { 0.90, 0.85 },
+    opacity = "0.90 0.85",
+    tile = true,
 })
 
 hl.window_rule({
-    name = "float-work-popups",
-    match = { initial_title = "^(about:blank - Brave|Untitled - Brave|Brave)$" },
+    name = "browser-dialogs",
+    match = { class = "^([Ff]irefox|[Gg]oogle-[Cc]hrome|[Bb]rave-[Bb]rowser|[Cc]hromium)$", modal = true },
     float = true,
     size = { 1080, 800 },
     center = true,
