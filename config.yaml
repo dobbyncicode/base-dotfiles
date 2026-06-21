@@ -54,8 +54,8 @@ dotfiles:
         src: bashrc
         dst: ~/.bashrc
     f_caelestia-hypr:
-        src: dotfiles/caelestia/hypr-user.conf
-        dst: ~/.config/caelestia/hypr-user.conf
+        src: dotfiles/caelestia/hypr-user.lua
+        dst: ~/.config/caelestia/hypr-user.lua
     f_fish:
         src: dotfiles/fish/config.fish
         dst: "{{@@ fish_config_dir @@}}"
@@ -93,6 +93,9 @@ dotfiles:
     f_eap:
         src: dotfiles/eap/config.toml
         dst: ~/.config/eap/config.toml
+    f_fontconfig:
+        src: dotfiles/fontconfig/fonts.conf
+        dst: ~/.config/fontconfig/fonts.conf
     f_mimeapps:
         src: dotfiles/mimeapps.list
         dst: ~/.config/mimeapps.list
@@ -109,6 +112,9 @@ dotfiles:
         src: dotfiles/yay/config.json
         dst: ~/.config/yay/config.json
         link: absolute
+    f_eap-shells:
+        src: dotfiles/eap/shells.toml
+        dst: ~/.config/eap/shells.toml
 
 actions:
     post:
@@ -136,11 +142,14 @@ profiles:
             - f_fish-greeting
             - f_swappy
             - f_eap
+            - f_starship
             - f_mimeapps
             - f_cursor-fallback
             - f_gtk-3
             - f_gtk-4
             - f_yay
+            - f_fontconfig
+            - f_eap-shells
     localhost:
         variables:
             fish_config_dir: ~/.config/fish/config.fish
@@ -155,3 +164,4 @@ profiles:
             - f_starship
             - f_termux-hush
             - f_eap
+            - f_eap-shells
