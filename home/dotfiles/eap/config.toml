@@ -9,5 +9,4 @@ MANWIDTH = "999"
 add = [
     "~/.local/bin",
     "{{@@ root_repo @@}}/scripts/bin",
-    "~/.config/custom-dotfiles/hypr-2/random-lua"
 ]
