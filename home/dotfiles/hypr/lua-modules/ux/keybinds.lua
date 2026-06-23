@@ -8,7 +8,6 @@ local file_manager = vars.file_manager
 local volume_control = vars.volume_control
 local code_editor = vars.code_editor
 local screenshot = vars.screenshot
-local clipboard = vars.clipboard
 local emoji_picker = vars.emoji_picker
 local screenrecord = vars.screenrecord
 
@@ -35,7 +34,6 @@ hl.bind(mainMod .. " + ALT + S", hl.dsp.exec_cmd(screenrecord))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd(screenshot .. " area"))
 hl.bind(mainMod .. " + ALT + SHIFT + S", hl.dsp.exec_cmd(screenrecord .. " -g \"$(slurp)\""))
 
-hl.bind(mainMod .. " + V", hl.dsp.exec_cmd(clipboard))
 hl.bind(mainMod .. " + PERIOD", hl.dsp.exec_cmd(emoji_picker))
 
 hl.bind("CTRL + Control_R", hl.dsp.global("caelestia:launcher"), { release = true })

@@ -7,7 +7,6 @@ variables:
     editor: "nvim"
     code_editor: "{{@@ terminal @@}} -e {{@@ editor @@}}"
     screenshot: "grimblast copysave output"
-    clipboard: "clipse"
     emoji_picker: "fuzzel -d emoji"
     screenrecord: "wf-recorder"
     file_manager_mime: "yazi"
