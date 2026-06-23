@@ -15,18 +15,18 @@ local screenrecord = vars.screenrecord
 -- ── Applications (Priority 1) ──
 
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
-hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd("[float; move 15% 5%; size 70% 60%] " .. browser))
+hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd(browser, { float = true, move = {288, 54}, size = {1344, 648} }))
 
 hl.bind(mainMod .. " + C", hl.dsp.exec_cmd(code_editor))
-hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("[float; move 15% 5%; size 70% 60%] " .. code_editor))
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd(code_editor, { float = true, move = {288, 54}, size = {1344, 648} }))
 
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(file_manager))
-hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd("[float; move 15% 5%; size 70% 60%] " .. file_manager))
+hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd(file_manager, { float = true }))
 
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("[float; move 15% 5%; size 70% 60%] " .. terminal))
-hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd("[float; move 15% 5%; size 70% 60%] " .. terminal))
+hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd(terminal, { float = true, move = {288, 54}, size = {1344, 648} }))
+hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd(terminal, { float = true, move = {288, 54}, size = {1344, 648} }))
 
 -- ── Utilities (Priority 2) ──
 
@@ -43,7 +43,7 @@ hl.bind("CTRL + Control_R", hl.dsp.global("caelestia:launcher"), { release = tru
 -- ── Audio (Priority 2) ──
 
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd(volume_control))
-hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd("[float; move 15% 5%; size 70% 60%] " .. volume_control))
+hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd(volume_control, { float = true, move = {288, 54}, size = {1344, 648} }))
 
 -- ── Window State (Priority 3) ──
 
@@ -55,7 +55,7 @@ hl.bind(mainMod .. " + CTRL + SHIFT + F", hl.dsp.window.float({ action = "toggle
 
 -- ── Layout (Priority 4) ──
 
-hl.bind(mainMod .. " + L", hl.dsp.layout("cyclenext"))
+hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("cycle-layout"))
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("layout_picker"))
 hl.bind(mainMod .. " + O", hl.dsp.layout("swapsplit"))
 

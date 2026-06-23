@@ -17,7 +17,7 @@ hl.window_rule({
 
 hl.window_rule({
     name = "file-management",
-    match = { class = "^([Tt]hunar|xdg-desktop-portal-gtk|yazi-float)$" },
+    match = { class = "^([Tt]hunar|xdg-desktop-portal-gtk)$" },
     float = true,
     center = true,
     size = { 1080, 800 },

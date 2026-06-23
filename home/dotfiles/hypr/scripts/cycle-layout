@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+current=$(hyprctl activeworkspace -j | jq -r '.layout')
+if [ "$current" = "dwindle" ]; then
+  hyprctl dispatch setlayout master
+else
+  hyprctl dispatch setlayout dwindle
+fi

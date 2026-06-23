@@ -3,7 +3,7 @@ variables:
     terminal: "ghostty"
     browser: "brave"
     volume_control: "pavucontrol"
-    file_manager: "{{@@ terminal @@}} -a yazi-float yazi"
+    file_manager: "{{@@ terminal @@}} -e yazi"
     editor: "nvim"
     code_editor: "{{@@ terminal @@}} -e {{@@ editor @@}}"
     screenshot: "grimblast copysave output"
