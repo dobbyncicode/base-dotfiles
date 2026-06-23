@@ -1,7 +1,7 @@
 variables:
     # --- [ i ] - Apps ---
-    terminal: "foot"
-    browser: "brave-origin-beta"
+    terminal: "ghostty"
+    browser: "brave"
     volume_control: "pavucontrol"
     file_manager: "{{@@ terminal @@}} -a yazi-float yazi"
     editor: "nvim"
