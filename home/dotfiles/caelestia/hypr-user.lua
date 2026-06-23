@@ -20,4 +20,5 @@ require("lua-modules.ui.miscs")
 require("lua-modules.ui.borders")
 
 -- --- [ i ] - Exemption Section -
+require("lua-modules.ux.layouts")
 require("lua-modules.ux.window-rules")

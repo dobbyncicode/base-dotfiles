@@ -55,9 +55,35 @@ hl.bind(mainMod .. " + CTRL + SHIFT + F", hl.dsp.window.float({ action = "toggle
 
 -- ── Layout (Priority 4) ──
 
-hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("cycle-layout"))
-hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("layout_picker"))
-hl.bind(mainMod .. " + O", hl.dsp.layout("swapsplit"))
+hl.bind(mainMod .. " + Tab", function()
+    local layouts    = { "scrolling", "dwindle", "master", "monocle" }
+    local workspace  = hl.get_active_workspace()
+    local next_layout = "dwindle"
+
+    if not workspace then
+        return
+    end
+
+    for i = 1, #layouts do
+        if layouts[i] == workspace.tiled_layout then
+            next_layout = layouts[(i % #layouts) + 1]
+            break
+        end
+    end
+
+    hl.workspace_rule({ workspace = tostring(workspace.id), layout = next_layout })
+end)
+
+local scroll_dirs = {}
+hl.bind(mainMod .. " + L", function()
+    local workspace = hl.get_active_workspace()
+    if workspace then
+        local ws_id = tostring(workspace.id)
+        local dir = scroll_dirs[ws_id] == "right" and "down" or "right"
+        scroll_dirs[ws_id] = dir
+        hl.workspace_rule({ workspace = ws_id, layout_opts = { direction = dir } })
+    end
+end)
 
 -- ── Navigation ──
 
@@ -71,10 +97,10 @@ hl.bind(mainMod .. " + ALT + right", hl.dsp.exec_cmd("hyprctl dispatch focusmoni
 hl.bind(mainMod .. " + ALT + up", hl.dsp.exec_cmd("hyprctl dispatch focusmonitor u"))
 hl.bind(mainMod .. " + ALT + down", hl.dsp.exec_cmd("hyprctl dispatch focusmonitor d"))
 
-hl.bind(mainMod .. " + CTRL + left", hl.dsp.window.resize({ x = -50, y = 0 }))
-hl.bind(mainMod .. " + CTRL + right", hl.dsp.window.resize({ x = 50, y = 0 }))
-hl.bind(mainMod .. " + CTRL + up", hl.dsp.window.resize({ x = 0, y = -50 }))
-hl.bind(mainMod .. " + CTRL + down", hl.dsp.window.resize({ x = 0, y = 50 }))
+hl.bind(mainMod .. " + CTRL + left", hl.dsp.window.resize({ x = -50, y = 0, relative = true }), { repeating = true })
+hl.bind(mainMod .. " + CTRL + right", hl.dsp.window.resize({ x = 50, y = 0, relative = true }), { repeating = true })
+hl.bind(mainMod .. " + CTRL + up", hl.dsp.window.resize({ x = 0, y = -50, relative = true }), { repeating = true })
+hl.bind(mainMod .. " + CTRL + down", hl.dsp.window.resize({ x = 0, y = 50, relative = true }), { repeating = true })
 
 -- ── Workspaces ──
 for i = 1, 10 do
