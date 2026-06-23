@@ -10,10 +10,14 @@ config:
 
 dotfiles:
     f_autologin:
-      src: autologin.conf
-      dst: /etc/systemd/system/getty@tty1.service.d/override.conf
+        src: autologin.conf
+        dst: /etc/systemd/system/getty@tty1.service.d/override.conf
+    f_pacman-setting:
+        src: pacman.conf
+        dst: /etc/pacman.conf
 
 profiles:
     DobbynciCode:
       dotfiles:
         - f_autologin
+        - f_pacman-setting
