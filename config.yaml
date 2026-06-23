@@ -165,7 +165,7 @@ profiles:
             - f_termux-hush
             - f_eap
             - f_eap-shells
-    BasicInstall:
+    BaseArchInstall:
         variables:
             fish_config_dir: ~/.config/fish/config.fish
         dotfiles:
