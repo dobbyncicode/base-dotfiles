@@ -3,10 +3,10 @@
 # --- Padding ---
 
 # Horizontal padding between terminal cells and the left/right borders.
-window-padding-x = 12
+window-padding-x = 24
 
 # Vertical padding between terminal cells and the top/bottom borders.
-window-padding-y = 8
+window-padding-y = 16
 
 # Balance the leftover pixels from the grid across all four edges instead of
 # letting the top-left cell hug the border. This is what removes the "content
