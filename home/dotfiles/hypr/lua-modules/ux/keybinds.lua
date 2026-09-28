@@ -22,11 +22,9 @@ hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd(code_editor, { float = true, 
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(file_manager))
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd(file_manager, { float = true }))
 
-hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd(terminal, { float = true, move = {288, 54}, size = {1344, 648} }))
 hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd(terminal, { float = true, move = {288, 54}, size = {1344, 648} }))
-hl.unbind(mainMod .. " + T")
 
 -- ── Utilities (Priority 2) ──
 
