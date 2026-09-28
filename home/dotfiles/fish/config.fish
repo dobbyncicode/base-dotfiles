@@ -31,14 +31,6 @@ abbr tla "tree -la -I '.git'"
 
 # --- [ i ] - Function section ---
 
-function yazi
-    set tmp (mktemp -t "yazi-cwd.XXXXXX")
-    command yazi $argv --cwd-file="$tmp"
-    if read -z cwd < "$tmp"; and [ "$cwd" != "$PWD" ]; and test -d "$cwd"
-        builtin cd -- "$cwd"
-    end
-    rm -f -- "$tmp"
-end
 function tsdrop
     if not tailscale status >/dev/null 2>&1
         echo "🔑 setting up tailscale permissions for you real quick..."

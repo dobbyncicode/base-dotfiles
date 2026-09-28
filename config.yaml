@@ -44,12 +44,6 @@ dotfiles:
         link: absolute
         actions:
             - refresh_fonts
-    d_yazi:
-        src: dotfiles/yazi
-        dst: ~/.config/yazi
-        link: absolute
-        actions:
-            - create_yazi_desktop
     f_bashrc:
         src: bashrc
         dst: ~/.bashrc
@@ -63,10 +57,6 @@ dotfiles:
     f_gitconfig:
         src: gitconfig
         dst: ~/.gitconfig
-        link: absolute
-    f_caelestia-shell:
-        src: dotfiles/caelestia/shell.json
-        dst: ~/.config/caelestia/shell.json
         link: absolute
     f_nvim-default:
         src: dotfiles/nvim/patch.lua
@@ -118,7 +108,6 @@ dotfiles:
 
 actions:
     post:
-        create_yazi_desktop: "[[ -f ~/.local/share/applications/yazi.desktop ]] || cat {{@@ _dotdrop_dotpath @@}}/applications/yazi.desktop > ~/.local/share/applications/yazi.desktop"
         refresh_fonts: "fc-cache -fv"
 
 profiles:
@@ -131,12 +120,10 @@ profiles:
             - d_icons
             - d_xdg-icons
             - d_fonts
-            - d_yazi
             - f_bashrc
             - f_caelestia-hypr
             - f_fish
             - f_gitconfig
-            - f_caelestia-shell
             - f_nvim-default
             - f_yt-dlp
             - f_fish-greeting
