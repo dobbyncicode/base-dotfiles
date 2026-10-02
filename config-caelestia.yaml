@@ -1,0 +1,4 @@
+config:
+    dotpath: home
+    import_variables:
+        - variables.yaml
