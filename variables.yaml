@@ -21,6 +21,23 @@ variables:
     default_shell: "bash"
     root_repo: "{{@@ _dotdrop_cfgpath.rsplit('/', 1)[0] @@}}"
 
+    # --- [ i ] - Monitor Setup ---
+    monitor1_port: "HDMI-A-1"
+    monitor1_width: "1920"
+    monitor1_height: "1080"
+    monitor1_scale: "1" 
+    monitor1_refresh: "60"
+    monitor1_position: "main"
+    monitor1_orientation: "landscape"
+
+    monitor2_port: "DP-1"
+    monitor2_width: "1600"
+    monitor2_height: "900"
+    monitor2_scale: "1"
+    monitor2_refresh: "60"
+    monitor2_position: "right"
+    monitor2_orientation: "portrait"
+
     # --- [ i ] - Theming ---
     cursor_theme: "Bibata-Modern-Ice"
     cursor_size: "24"

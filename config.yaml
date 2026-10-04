@@ -2,6 +2,7 @@ uservariables:
     user_email: "Email"
     user_name: "Name"
     user_location: "Location for weather. Leave blank if not using caelestia shell"
+    monitor_setup: "Number of active monitors on set-up"
 
 config:
     backup: false
@@ -16,98 +17,97 @@ config:
     import_variables:
         - uservariables.yaml:optional
         - variables.yaml
-        
 
 dotfiles:
+    d_fonts:
+        src: theming-things/fonts
+        dst: ~/.local/share/fonts
+        link: absolute
+        actions:
+            - refresh_fonts
     d_hypr:
         src: dotfiles/hypr
         dst: ~/.config/custom-dotfiles/hypr
+    d_icons:
+        src: theming-things/icons
+        dst: ~/.icons
+        link: absolute
     d_pictures:
         src: Wallpapers
         dst: ~/Pictures/Wallpapers
         link: absolute
     d_termux:
-        src: termux
+        src: termux-files
         dst: ~/.termux
         link: absolute
     d_xdg-icons:
-        src: theme-resources/icons
+        src: theming-things/icons
         dst: ~/.local/share/icons
         link: absolute
-    d_icons:
-        src: theme-resources/icons
-        dst: ~/.icons
-        link: absolute
-    d_fonts:
-        src: theme-resources/fonts
-        dst: ~/.local/share/fonts
-        link: absolute
-        actions:
-            - refresh_fonts
     f_bashrc:
         src: bashrc
         dst: ~/.bashrc
     f_caelestia-hypr:
         src: dotfiles/caelestia/hypr-user.lua
         dst: ~/.config/caelestia/hypr-user.lua
+    f_cursor-fallback:
+        src: cursor-theme
+        dst: ~/.icons/default/index.theme
+    f_eap:
+        src: dotfiles/eap/config.toml
+        dst: ~/.config/eap/config.toml
+    f_eap-shells:
+        src: dotfiles/eap/shells.toml
+        dst: ~/.config/eap/shells.toml
+    f_fastfetch:
+        src: dotfiles/fastfetch/config.jsonc
+        dst: ~/.config/fastfetch/config.jsonc
     f_fish:
         src: dotfiles/fish/config.fish
         dst: "{{@@ fish_config_dir @@}}"
         link: absolute
+    f_fish-greeting:
+        src: dotfiles/fish/fish_greeting.fish
+        dst: ~/.config/fish/functions/fish_greeting.fish
+    f_fontconfig:
+        src: dotfiles/fontconfig/fonts.conf
+        dst: ~/.config/fontconfig/fonts.conf
+    f_ghostty:
+        src: dotfiles/ghostty/config
+        dst: ~/.config/ghostty/config
     f_gitconfig:
         src: gitconfig
         dst: ~/.gitconfig
         link: absolute
-    f_nvim-default:
-        src: dotfiles/nvim/patch.lua
-        dst: ~/.config/nvim/after/plugin/patch.lua
-    f_yt-dlp:
-        src: dotfiles/yt-dlp/config
-        dst: ~/.config/yt-dlp/config
-    f_ghostty:
-        src: dotfiles/ghostty/config
-        dst: ~/.config/ghostty/config
-    f_fish-greeting:
-        src: dotfiles/fish/fish_greeting.fish
-        dst: ~/.config/fish/functions/fish_greeting.fish
-    f_fastfetch:
-        src: dotfiles/fastfetch/config.jsonc
-        dst: ~/.config/fastfetch/config.jsonc
-    f_starship:
-        src: dotfiles/starship.toml
-        dst: ~/.config/starship.toml
-    f_termux-hush:
-        src: hushlogin
-        dst: ~/.hushlogin
-    f_swappy:
-        src: dotfiles/swappy/config
-        dst: ~/.config/swappy/config
-        link: absolute
-    f_eap:
-        src: dotfiles/eap/config.toml
-        dst: ~/.config/eap/config.toml
-    f_fontconfig:
-        src: dotfiles/fontconfig/fonts.conf
-        dst: ~/.config/fontconfig/fonts.conf
-    f_mimeapps:
-        src: dotfiles/mimeapps.list
-        dst: ~/.config/mimeapps.list
     f_gtk-3:
         src: dotfiles/gtk-theming.ini
         dst: ~/.config/gtk-3.0/settings.ini
     f_gtk-4:
         src: dotfiles/gtk-theming.ini
         dst: ~/.config/gtk-4.0/settings.ini
-    f_cursor-fallback:
-        src: cursor-theme
-        dst: ~/.icons/default/index.theme
+    f_mimeapps:
+        src: dotfiles/mimeapps.list
+        dst: ~/.config/mimeapps.list
+    f_nvim-default:
+        src: dotfiles/nvim/patch.lua
+        dst: ~/.config/nvim/after/plugin/patch.lua
+    f_starship:
+        src: dotfiles/starship.toml
+        dst: ~/.config/starship.toml
+    f_swappy:
+        src: dotfiles/swappy/config
+        dst: ~/.config/swappy/config
+        link: absolute
+    f_termux-hush:
+        src: termux-files/hushlogin
+        dst: ~/.hushlogin
     f_yay:
         src: dotfiles/yay/config.json
         dst: ~/.config/yay/config.json
         link: absolute
-    f_eap-shells:
-        src: dotfiles/eap/shells.toml
-        dst: ~/.config/eap/shells.toml
+    f_yt-dlp:
+        src: dotfiles/yt-dlp/config
+        dst: ~/.config/yt-dlp/config
 
 actions:
     post:
