@@ -1,5 +1,5 @@
 variables:
-    # --- [ i ] - Apps ---
+    # [ i ]: Apps ---
     terminal: "ghostty"
     browser: "brave"
     volume_control: "pavucontrol"
@@ -13,19 +13,19 @@ variables:
     media_player: "mpv"
     pdf_viewer: "org.pwmt.zathura"
 
-    # --- [ i ] - Editor information ---
+    # [ i ]: Editor ---
     tab_space: "4"
 
-    # --- [ i ] - System information ---
+    # [ i ]: Shell ---
     interactive_shell: "fish"
     default_shell: "bash"
     root_repo: "{{@@ _dotdrop_cfgpath.rsplit('/', 1)[0] @@}}"
 
-    # --- [ i ] - Monitor Setup ---
+    # [ i ]: Monitor setup ---
     monitor1_port: "HDMI-A-1"
     monitor1_width: "1920"
     monitor1_height: "1080"
-    monitor1_scale: "1" 
+    monitor1_scale: "1"
     monitor1_refresh: "60"
     monitor1_position: "main"
     monitor1_orientation: "landscape"
@@ -38,7 +38,7 @@ variables:
     monitor2_position: "right"
     monitor2_orientation: "portrait"
 
-    # --- [ i ] - Theming ---
+    # [ i ]: Theming ---
     cursor_theme: "Bibata-Modern-Ice"
     cursor_size: "24"
     icon_theme: "DeepenOS-Icons-Theme"

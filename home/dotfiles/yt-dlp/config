@@ -1,0 +1,38 @@
+# --- [ i ] Audio only
+-x
+--audio-format mp3
+--audio-quality 5
+--extract-audio
+
+# --- [ i ] Meta data
+--embed-thumbnail
+--embed-metadata
+--add-metadata
+
+--parse-metadata "title:%(artist)s - %(title)s"
+--parse-metadata "title:%(artist)s by %(title)s"
+
+# 4. GLOBAL CLEANER (Nuking .wmv, lyrics, and extra garbage)
+--replace-in-metadata title "(?i)\s*([\(\[]?(lyrics|official|video|hd|hq|audio|full\s*song|w/\s*lyrics|with\s*lyrics)[\)\]]?|by\s*.*$|\.(wmv|mp4|mkv|avi))" ""
+--replace-in-metadata artist "(?i)\s*([\(\[]?(lyrics|official|video|hd|hq|audio|full\s*song|w/\s*lyrics|with\s*lyrics)[\)\]]?|\.(wmv|mp4|mkv|avi))" ""
+
+# 5. OLD SCHOOL FALLBACK (Kapag walang artist, "Various Artists" na lang)
+# Tatanggalin din yung mga random uploader names para maging "Various Artists"
+--replace-in-metadata artist "^$" "Various Artists"
+
+# 6. OUTPUT FILENAME (Malinis sa folder, malinis sa TV)
+-o "~/Music/%(artist|Various Artists)s - %(title)s.%(ext)s"
+
+# 7. CONTENT FILTER (Para walang daldal at intro)
+--sponsorblock-remove sponsor,intro,outro,selfpromo,preview,interaction,music_offtopic
+
+# 8. NO TRASH FILES (MP3 lang ang matitira sa dulo)
+--no-write-subs
+--no-write-thumbnail
+--no-write-description
+--no-write-info-json
+
+# 9. AUTOMATION
+--ignore-errors
+--download-archive ~/Music/.archive
+--cookies-from-browser {{@@ browser @@}}

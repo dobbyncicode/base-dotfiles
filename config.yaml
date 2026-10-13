@@ -32,6 +32,9 @@ dotfiles:
         src: theming-things/icons
         dst: ~/.icons
         link: absolute
+    d_nvim:
+        src: dotfiles/nvim
+        dst: ~/.config/nvim
     d_pictures:
         src: Wallpapers
         dst: ~/Pictures/Wallpapers
@@ -121,13 +124,13 @@ profiles:
             - d_hypr
             - d_pictures
             - d_icons
+            - d_nvim
             - d_xdg-icons
             - d_fonts
             - f_bashrc
             - f_caelestia-hypr
             - f_fish
             - f_gitconfig
-            - f_nvim-default
             - f_yt-dlp
             - f_ghostty
             - f_fish-greeting
@@ -146,7 +149,7 @@ profiles:
             fish_config_dir: ~/.config/fish/config.fish
         dotfiles:
             - d_termux
-            - f_nvim-default
+            - d_nvim
             - f_gitconfig
             - f_bashrc
             - f_fish
@@ -162,12 +165,12 @@ profiles:
         dotfiles:
             - d_pictures
             - d_icons
+            - d_nvim
             - d_xdg-icons
             - d_fonts
             - f_bashrc
             - f_gitconfig
             - f_fish
-            - f_nvim-default
             - f_eap
             - f_mimeapps
             - f_cursor-fallback
