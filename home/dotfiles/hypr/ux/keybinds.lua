@@ -119,3 +119,13 @@ hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"))
 hl.bind(mainMod .. " + XF86AudioRaiseVolume", hl.dsp.global("caelestia:brightnessUp"))
 hl.bind(mainMod .. " + XF86AudioLowerVolume", hl.dsp.global("caelestia:brightnessDown"))
+
+
+-- [ i ]: Submaps ---
+
+hl.define_submap("float_term", function()
+    hl.bind("k", hl.dsp.exec_cmd(browser))
+    hl.bind("escape", hl.dsp.submap("reset"))
+end)
+
+hl.bind("CTRL + SHIFT + F12", hl.dsp.submap("float_term"))
